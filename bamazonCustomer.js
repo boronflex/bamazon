@@ -1,5 +1,4 @@
-// 5. Then create a Node application called `bamazonCustomer.js`. Running this application will first display all of the items
-// available for sale. Include the ids, names, and prices of products for sale.
+// 5. Then create a Node application called `bamazonCustomer.js`.
 
 var inquirer = require("inquirer");
 var mysql = require("mysql");
@@ -18,16 +17,52 @@ var connection = mysql.createConnection({
 
 connection.connect(function(err) {
   if (err) throw err;
-  //runSearch(); run app if connection successful
+  //customerOrder(); run app if connection successful
 });
 
 
 // 6. The app should then prompt users with two messages.
 
+function customerOrder(){
 
+//Running this application will first display all of the items available for sale. Include the ids, names, 
+//and prices of products for sale.
+  
+    inquirer.prompt([
 
 //    * The first should ask them the ID of the product they would like to buy.
+
+      
+        {
+          type: "confirm",
+          name: "userInput",
+          message: "Do you want play again?",
+        },
+
 //    * The second message should ask how many units of the product they would like to buy.
+
+        {
+
+        }
+    
+      
+      ]).then(function(command) {
+  
+        switch (command.userInput) {
+          case true:
+            setUp()
+            runGame();
+            break;
+  
+          case false:
+            console.log("ok- maybe later")
+            break;
+  
+        }
+  
+      });
+  
+  }
 
 // 7. Once the customer has placed the order, your application should check if your store has enough of the product to meet
 // the customer's request.
