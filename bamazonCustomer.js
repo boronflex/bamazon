@@ -4,7 +4,27 @@
 var inquirer = require("inquirer");
 var mysql = require("mysql");
 
+var connection = mysql.createConnection({
+  host: "localhost",
+  port: 3306,
+
+  // Your username
+  user: "root",
+
+  // Your password
+  password: "",
+  database: "bamazon"
+});
+
+connection.connect(function(err) {
+  if (err) throw err;
+  //runSearch(); run app if connection successful
+});
+
+
 // 6. The app should then prompt users with two messages.
+
+
 
 //    * The first should ask them the ID of the product they would like to buy.
 //    * The second message should ask how many units of the product they would like to buy.
