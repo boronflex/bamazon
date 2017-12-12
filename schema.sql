@@ -29,8 +29,7 @@ CREATE TABLE products(
 
 --     * stock_quantity (how much of the product is available in stores)
 
-  stock_quantity INT NULL,
+  stock_quantity INT NULL
 
 )
 
---  4. Populate this database with around 10 different products. (i.e. Insert "mock" data rows into this database and table).
