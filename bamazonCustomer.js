@@ -54,15 +54,17 @@ function customerOrder(){
     
       
       ]).then(function(command) {
+
+        //var inStock = verifyInStock Function(command.productID, command.productAMT)
+        //promise and asysc
   
-        switch (command.userInput) {
+        switch (inStock) {
           case true:
-            setUp()
-            runGame();
+            //function to place order
             break;
   
           case false:
-            console.log("ok- maybe later")
+            console.log("Insufficient quantity!")
             break;
   
         }
