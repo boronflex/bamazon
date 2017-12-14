@@ -18,12 +18,14 @@ var connection = mysql.createConnection({
 
 connection.connect(function(err) {
   if (err) throw err;
+  console.log("connected")
   //customerOrder(); run app if connection successful
 });
 
 //################################begin order handler constructor
 
 var orderHandler = function(productID, productAmount) {
+
   this.productID = productID;
   this.productAmount = productAmount;
   this.inStock = function(){
@@ -39,16 +41,18 @@ var orderHandler = function(productID, productAmount) {
         throw error;
       }
       if (response.length === 0){
-        console.log("item is not available please try a different product")
+        return false;
+        //console.log("item is not available please try a different product")
       } else {
-
+        return true;
         //console.log(response);
-        console.log(response[0].stock_quantity);
+        //console.log(`${response[0].stock_quantity} available`);
 
       }
       
     });
   };
+  
   this.listAvailable = function(){
 
     itemList = "Items for sale: ";
@@ -83,11 +87,7 @@ var orderHandler = function(productID, productAmount) {
   };
 }
 
-var myOrder = new orderHandler(5);
-
-//myOrder.listAvailable();
-
-myOrder.inStock();
+var myOrder = new orderHandler;
 
 //################################end order handler constructor
 
@@ -95,7 +95,7 @@ myOrder.inStock();
 
 async function customerOrder(){
 
-  console.log(await myTestOrder.listAvailable())
+  console.log(await myOrder.listAvailable())
 
   inquirer.prompt([// consider throwing an autocomplete in here https://github.com/mokkabonna/inquirer-autocomplete-prompt
     
@@ -127,15 +127,17 @@ async function customerOrder(){
     console.log(`product ID: ${command.productID}`)
     console.log(`product Amount: ${command.productAMT}`)
 
-    var inStock = myOrder.inStock();
+    myOrder = new orderHandler(command.productID);
 
-    switch (inStock) {
+    //myOrder.inStock();
+
+    switch (myOrder.inStock()) {
       case true:
-        //function to place order
+        console.log("product available")
         break;
 
       case false:
-        console.log("Insufficient quantity!")
+        console.log("product not available")
         break;
 
     }
@@ -144,8 +146,7 @@ async function customerOrder(){
 
 }
 
-  
-//customerOrder();
+customerOrder();
 
 //Running this application will first display all of the items available for sale. Include the ids, names,
 //and prices of products for sale.
