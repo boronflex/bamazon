@@ -41,10 +41,12 @@ var orderHandler = function(productID, productAmount) {
         throw error;
       }
       if (response.length === 0){
-        return false;
+        return 'false';
+        //console.log("false")
         //console.log("item is not available please try a different product")
       } else {
-        return true;
+        return 'true';
+        //console.log("true")
         //console.log(response);
         //console.log(`${response[0].stock_quantity} available`);
 
@@ -127,20 +129,22 @@ async function customerOrder(){
     console.log(`product ID: ${command.productID}`)
     console.log(`product Amount: ${command.productAMT}`)
 
-    myOrder = new orderHandler(command.productID);
+    stocked = new orderHandler(command.productID);
 
-    //myOrder.inStock();
+    stocked.inStock();
 
-    switch (myOrder.inStock()) {
-      case true:
-        console.log("product available")
-        break;
+    //stocked = myOrder.inStock();
 
-      case false:
-        console.log("product not available")
-        break;
+    // switch (stocked) {
+    //   case true:
+    //     console.log("product available")
+    //     break;
 
-    }
+    //   case false:
+    //     console.log("product not available")
+    //     break;
+
+    // }
 
   });
 
