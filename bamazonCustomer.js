@@ -41,11 +41,11 @@ var orderHandler = function(productID, productAmount) {
         throw error;
       }
       if (response.length === 0){
-        return 'false';
+        return false;
         //console.log("false")
         //console.log("item is not available please try a different product")
       } else {
-        return 'true';
+        return true;
         //console.log("true")
         //console.log(response);
         //console.log(`${response[0].stock_quantity} available`);
@@ -91,6 +91,10 @@ var orderHandler = function(productID, productAmount) {
 
 var myOrder = new orderHandler;
 
+// stocked = new orderHandler(2);
+
+// stocked.inStock();
+
 //################################end order handler constructor
 
 // 6. The app should then prompt users with two messages.
@@ -131,20 +135,18 @@ async function customerOrder(){
 
     stocked = new orderHandler(command.productID);
 
-    stocked.inStock();
+    //stocked.inStock();
 
-    //stocked = myOrder.inStock();
+    switch (stocked.inStock()) {
+      case true:
+        console.log("product available")
+        break;
 
-    // switch (stocked) {
-    //   case true:
-    //     console.log("product available")
-    //     break;
+      case false:
+        console.log("product not available")
+        break;
 
-    //   case false:
-    //     console.log("product not available")
-    //     break;
-
-    // }
+    }
 
   });
 
