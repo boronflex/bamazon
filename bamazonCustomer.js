@@ -51,29 +51,34 @@ var orderHandler = function(productID, productAmount) {
   };
   this.listAvailable = function(){
 
-    connection.query(
-      'SELECT * FROM products',
+    itemList = "Items for sale: ";
 
-    function(error, response){
-      if(error){
-        throw error;
-      }
+    return new Promise((resolve) => {
 
-      //response = JSON.stringify(response, null, 2)
+      connection.query(
 
-      console.log("Items for sale: ")
-
-      let iterable = response;
-
-      for (let value of iterable){
-        console.log(
-          `${value.item_id} - ${value.product_name} -$${value.price}`
-        );
-      }
-
-      //console.log(response);
+        'SELECT * FROM products',
+  
+          function(error, response){
+            if(error){
+              throw error;
+            }
       
-    });
+            //response = JSON.stringify(response, null, 2)
+        
+              let iterable = response;
+        
+              for (let value of iterable){
+                itemList += `\n${value.item_id} - ${value.product_name} -$${value.price}`
+              }
+
+              resolve(itemList);
+
+            //console.log(response);
+            
+          });
+
+    })
 
   };
 }
@@ -88,60 +93,67 @@ var myTestOrder = new orderHandler(7);
 
 // 6. The app should then prompt users with two messages.
 
-function customerOrder(){
+async function customerOrder(){
 
-  myTestOrder.listAvailable()
+  console.log(await myTestOrder.listAvailable())
+
+  inquirer.prompt([// consider throwing an autocomplete in here https://github.com/mokkabonna/inquirer-autocomplete-prompt
+    
+          //also there is a validate feature i could use here in the docs, returns promise
+          //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
+    
+    //    * The first should ask them the ID of the product they would like to buy.
+    
+          
+    {
+      type: "input",
+      name: "productID",
+      message: "Enter a Number for order: "
+      //choices: [1,2,3,4]
+    },
+
+//    * The second message should ask how many units of the product they would like to buy.
+
+    {
+      type: "input",
+      name: "productAMT",
+      message: "How many do you want to purchase?",
+    }
+
+  
+  ]).then(function(command) {
+
+    //var inStock = verifyInStock Function(command.productID, command.productAMT)
+    //promise and asysc
+
+    switch (inStock) {
+      case true:
+        //function to place order
+        break;
+
+      case false:
+        console.log("Insufficient quantity!")
+        break;
+
+    }
+
+  });
+
+}
 
 //Running this application will first display all of the items available for sale. Include the ids, names,
 //and prices of products for sale.
   //SELECT * FROM products;
+
+// customerOrder().then((r) => {
+
+//   console.log(r);
   
-    inquirer.prompt([// consider throwing an autocomplete in here https://github.com/mokkabonna/inquirer-autocomplete-prompt
 
-      //also there is a validate feature i could use here in the docs, returns promise
-      //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
 
-//    * The first should ask them the ID of the product they would like to buy.
-
-      
-        {
-          type: "input",
-          name: "productID",
-          message: "Enter a Number for order: "
-          //choices: [1,2,3,4]
-        },
-
-//    * The second message should ask how many units of the product they would like to buy.
-
-        {
-          type: "input",
-          name: "productAMT",
-          message: "How many do you want to purchase?",
-        }
-    
-      
-      ]).then(function(command) {
-
-        //var inStock = verifyInStock Function(command.productID, command.productAMT)
-        //promise and asysc
+// })
   
-        switch (inStock) {
-          case true:
-            //function to place order
-            break;
-  
-          case false:
-            console.log("Insufficient quantity!")
-            break;
-  
-        }
-  
-      });
-  
-  }
-
 customerOrder();
-
 
 // 7. Once the customer has placed the order, your application should check if your store has enough of the product to meet
 // the customer's request.
