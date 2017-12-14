@@ -83,11 +83,11 @@ var orderHandler = function(productID, productAmount) {
   };
 }
 
-var myTestOrder = new orderHandler(7);
+var myOrder = new orderHandler(5);
 
-//myTestOrder.listAvailable();
+//myOrder.listAvailable();
 
-//myTestOrder.inStock();
+myOrder.inStock();
 
 //################################end order handler constructor
 
@@ -103,13 +103,11 @@ async function customerOrder(){
           //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
     
     //    * The first should ask them the ID of the product they would like to buy.
-    
           
     {
       type: "input",
       name: "productID",
       message: "Enter a Number for order: "
-      //choices: [1,2,3,4]
     },
 
 //    * The second message should ask how many units of the product they would like to buy.
@@ -126,6 +124,11 @@ async function customerOrder(){
     //var inStock = verifyInStock Function(command.productID, command.productAMT)
     //promise and asysc
 
+    console.log(`product ID: ${command.productID}`)
+    console.log(`product Amount: ${command.productAMT}`)
+
+    var inStock = myOrder.inStock();
+
     switch (inStock) {
       case true:
         //function to place order
@@ -141,27 +144,16 @@ async function customerOrder(){
 
 }
 
+  
+//customerOrder();
+
 //Running this application will first display all of the items available for sale. Include the ids, names,
 //and prices of products for sale.
-  //SELECT * FROM products;
-
-// customerOrder().then((r) => {
-
-//   console.log(r);
-  
-
-
-// })
-  
-customerOrder();
 
 // 7. Once the customer has placed the order, your application should check if your store has enough of the product to meet
 // the customer's request.
 
 //    * If not, the app should log a phrase like `Insufficient quantity!`, and then prevent the order from going through.
-
-
-
 
     //need order constructor to pass orders to - validates this crap before it runs sql
     //SELECT query validate amout is greater than requested
