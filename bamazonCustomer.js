@@ -30,29 +30,31 @@ var orderHandler = function(productID, productAmount) {
   this.productAmount = productAmount;
   this.inStock = function(){
 
-    connection.query(
-      'SELECT stock_quantity FROM products WHERE ?',
-    {
-      item_id: productID
-    },
+    return new Promise((resolve) => {
+      connection.query(
+        'SELECT stock_quantity FROM products WHERE ?',
+      {
+        item_id: productID
+      },
 
-    function(error, response){
-      if(error){
-        throw error;
-      }
-      if (response.length === 0){
-        return false;
-        //console.log("false")
-        //console.log("item is not available please try a different product")
-      } else {
-        return true;
-        //console.log("true")
-        //console.log(response);
-        //console.log(`${response[0].stock_quantity} available`);
+      function(error, response){
+        if(error){
+          throw error;
+        }
+        if (response.length === 0){
+          resolve(false);
+          //console.log("false")
+          //console.log("item is not available please try a different product")
+        } else {
+          resolve(true);
+          //console.log("true")
+          //console.log(response);
+          //console.log(`${response[0].stock_quantity} available`);
 
-      }
-      
-    });
+        }
+        
+      });
+    })
   };
   
   this.listAvailable = function(){
@@ -91,9 +93,25 @@ var orderHandler = function(productID, productAmount) {
 
 var myOrder = new orderHandler;
 
-// stocked = new orderHandler(2);
+stocked = new orderHandler(12);//command.productID
 
-// stocked.inStock();
+async function validateStock(){
+
+  stocked1 = await stocked.inStock();
+
+  //console.log(stocked1)
+
+  return stocked1
+}
+
+var a = true;
+
+validateStock().then(v => {
+  a = v;
+  console.log(a);
+});
+
+
 
 //################################end order handler constructor
 
@@ -134,10 +152,16 @@ async function customerOrder(){
     console.log(`product Amount: ${command.productAMT}`)
 
     stocked = new orderHandler(command.productID);
+    
+    async function validateStock(){
 
-    //stocked.inStock();
+      return await stocked.inStock();
 
-    switch (stocked.inStock()) {
+    }
+
+    validateStock()
+
+    switch (validateStock()) {
       case true:
         console.log("product available")
         break;
@@ -152,7 +176,7 @@ async function customerOrder(){
 
 }
 
-customerOrder();
+//customerOrder();
 
 //Running this application will first display all of the items available for sale. Include the ids, names,
 //and prices of products for sale.
