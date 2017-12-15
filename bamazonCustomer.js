@@ -91,26 +91,33 @@ var orderHandler = function(productID, productAmount) {
   };
 }
 
+/////new and need to plug into order block
 var myOrder = new orderHandler;
 
-stocked = new orderHandler(9);//command.productID
+// stocked = new orderHandler(9);//command.productID
 
-async function validateStock(){
+// async function validateStock(){
 
-  stocked = await stocked.inStock();
+//   stocked = await stocked.inStock();
 
-  //console.log(stocked1)
+//   //console.log(stocked1)
 
-  return stocked
-}
+//   return stocked
+// }
 
-var a = true;
+// // var a = true;
 
-validateStock().then(v => {
-  a = v;
-  console.log(a);
-});
+// validateStock().then(v => {
+  
+//   a = v;
 
+//   //return a;
+//   console.log(a);
+
+// });
+
+//console.log(a)
+///need to plug into order block
 
 
 //################################end order handler constructor
@@ -151,32 +158,39 @@ async function customerOrder(){
     console.log(`product ID: ${command.productID}`)
     console.log(`product Amount: ${command.productAMT}`)
 
-    stocked = new orderHandler(command.productID);
-    
+    stocked = new orderHandler(command.productID);//
+
     async function validateStock(){
-
-      return await stocked.inStock();
-
+    
+      stocked = await stocked.inStock();
+    
+      return stocked
     }
+    
+    validateStock().then(v => {
 
-    validateStock()
-
-    switch (validateStock()) {
-      case true:
-        console.log("product available")
-        break;
-
-      case false:
-        console.log("product not available")
-        break;
-
-    }
+      var a = true;
+      
+      a = v;
+    
+      switch (a) {
+        case true:
+          console.log("product available")
+          break;
+  
+        case false:
+          console.log("product not available")
+          break;
+  
+      }
+    
+    });
 
   });
 
 }
 
-//customerOrder();
+customerOrder();
 
 //Running this application will first display all of the items available for sale. Include the ids, names,
 //and prices of products for sale.
