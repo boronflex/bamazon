@@ -175,7 +175,7 @@ async function customerOrder(){
           break;
   
         case false:
-          console.log("Product not available, place a different order")
+          console.log("Product not available or insuffivcient quantity, place a different order")
           customerOrder();
           break;
   
