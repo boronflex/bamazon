@@ -43,14 +43,10 @@ var orderHandler = function(productID, productAmount) {
         }
         if (response.length === 0){
           resolve(false);
-          //console.log("false")
-          //console.log("item is not available please try a different product")
+        } else if (response[0].stock_quantity < productAmount) {
+          resolve(false)
         } else {
           resolve(true);
-          //console.log("true")
-          //console.log(response);
-          //console.log(`${response[0].stock_quantity} available`);
-
         }
         
       });
@@ -87,6 +83,9 @@ var orderHandler = function(productID, productAmount) {
           });
 
     })
+
+  };
+  this.placeOrder = function(){
 
   };
 }
@@ -138,7 +137,7 @@ async function customerOrder(){
     {
       type: "input",
       name: "productID",
-      message: "Enter a Number for order: "
+      message: "Enter a Number for order, press E to exit: "
     },
 
 //    * The second message should ask how many units of the product they would like to buy.
@@ -152,13 +151,10 @@ async function customerOrder(){
   
   ]).then(function(command) {
 
-    //var inStock = verifyInStock Function(command.productID, command.productAMT)
-    //promise and asysc
+    // console.log(`product ID: ${command.productID}`)
+    // console.log(`product Amount: ${command.productAMT}`)
 
-    console.log(`product ID: ${command.productID}`)
-    console.log(`product Amount: ${command.productAMT}`)
-
-    stocked = new orderHandler(command.productID);//
+    stocked = new orderHandler(command.productID, command.productAMT);//
 
     async function validateStock(){
     
@@ -179,7 +175,8 @@ async function customerOrder(){
           break;
   
         case false:
-          console.log("product not available")
+          console.log("Product not available, place a different order")
+          customerOrder();
           break;
   
       }
