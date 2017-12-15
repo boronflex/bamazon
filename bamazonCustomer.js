@@ -86,6 +86,28 @@ var orderHandler = function(productID, productAmount) {
 
   };
   this.placeOrder = function(){
+    
+    return new Promise((resolve) => {
+      connection.query(
+        'UPDATE stock_quantity FROM products WHERE ?',
+      {
+        item_id: productID
+      },
+
+      function(error, response){
+        if(error){
+          throw error;
+        }
+        if (response.length === 0){
+          resolve(false);
+        } else if (response[0].stock_quantity < productAmount) {
+          resolve(false)
+        } else {
+          resolve(true);
+        }
+        
+      });
+    })
 
   };
 }
@@ -154,34 +176,42 @@ async function customerOrder(){
     // console.log(`product ID: ${command.productID}`)
     // console.log(`product Amount: ${command.productAMT}`)
 
-    stocked = new orderHandler(command.productID, command.productAMT);//
+    if (command.productID === 'e'){
+      console.log('thanks for visiting bamazon');
+    } else {
 
-    async function validateStock(){
-    
-      stocked = await stocked.inStock();
-    
-      return stocked
-    }
-    
-    validateStock().then(v => {
 
-      var a = true;
+      stocked = new orderHandler(command.productID, command.productAMT);//
+
+      async function validateStock(){
       
-      a = v;
-    
-      switch (a) {
-        case true:
-          console.log("product available")
-          break;
-  
-        case false:
-          console.log("Product not available or insuffivcient quantity, place a different order")
-          customerOrder();
-          break;
-  
+        stocked = await stocked.inStock();
+      
+        return stocked
       }
+      
+      validateStock().then(v => {
+
+        var a = true;
+        
+        a = v;
+      
+        switch (a) {
+          case true:
+            console.log("product available")
+            //placeOrder
+            break;
     
-    });
+          case false:
+            console.log("Product not available or insuffivcient quantity, place a different order")
+            customerOrder();
+            break;
+    
+        }
+      
+      });
+
+    }
 
   });
 
