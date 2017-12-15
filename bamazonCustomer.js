@@ -93,15 +93,15 @@ var orderHandler = function(productID, productAmount) {
 
 var myOrder = new orderHandler;
 
-stocked = new orderHandler(12);//command.productID
+stocked = new orderHandler(9);//command.productID
 
 async function validateStock(){
 
-  stocked1 = await stocked.inStock();
+  stocked = await stocked.inStock();
 
   //console.log(stocked1)
 
-  return stocked1
+  return stocked
 }
 
 var a = true;
