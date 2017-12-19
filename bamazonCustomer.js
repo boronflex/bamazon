@@ -1,8 +1,8 @@
-// 5. Then create a Node application called `bamazonCustomer.js`.
-
 
 var inquirer = require("inquirer");
 var mysql = require("mysql");
+
+//var orderHandler = require("./orderHandler");
 
 var connection = mysql.createConnection({
   host: "localhost",
@@ -19,7 +19,7 @@ var connection = mysql.createConnection({
 connection.connect(function(err) {
   if (err) throw err;
   console.log("connected")
-  //customerOrder(); run app if connection successful
+  customerOrder(); //run app if connection successful
 });
 
 //################################begin order handler constructor
@@ -28,6 +28,9 @@ var orderHandler = function(productID, productAmount) {
 
   this.productID = productID;
   this.productAmount = productAmount;
+  this.stockAMT = 0;
+  this.currPrice = 0;
+
   this.inStock = function(){
 
     return new Promise((resolve) => {
@@ -41,12 +44,14 @@ var orderHandler = function(productID, productAmount) {
         if(error){
           throw error;
         }
+        
         if (response.length === 0){
           resolve(false);
         } else if (response[0].stock_quantity < productAmount) {
           resolve(false)
         } else {
           resolve(true);
+          resolve(this.stockAMT = response[0].stock_quantity);
         }
         
       });
@@ -85,60 +90,39 @@ var orderHandler = function(productID, productAmount) {
     })
 
   };
+
   this.placeOrder = function(){
+
+    newStockQuantity = this.stockAMT - this.productAmount;
     
     return new Promise((resolve) => {
       connection.query(
-        'UPDATE stock_quantity FROM products WHERE ?',
-      {
-        item_id: productID
-      },
+        'UPDATE products SET stock_quantity = ? WHERE item_id = ?',
+      [
+        newStockQuantity,
+        productID
+      ],
 
       function(error, response){
         if(error){
           throw error;
         }
-        if (response.length === 0){
-          resolve(false);
-        } else if (response[0].stock_quantity < productAmount) {
-          resolve(false)
-        } else {
-          resolve(true);
-        }
+
+        resolve(console.log(response));
+        //console.log(response)
         
       });
     })
 
   };
+
+  this.getPrice = function(){
+
+  }
 }
 
-/////new and need to plug into order block
+
 var myOrder = new orderHandler;
-
-// stocked = new orderHandler(9);//command.productID
-
-// async function validateStock(){
-
-//   stocked = await stocked.inStock();
-
-//   //console.log(stocked1)
-
-//   return stocked
-// }
-
-// // var a = true;
-
-// validateStock().then(v => {
-  
-//   a = v;
-
-//   //return a;
-//   console.log(a);
-
-// });
-
-//console.log(a)
-///need to plug into order block
 
 
 //################################end order handler constructor
@@ -197,13 +181,26 @@ async function customerOrder(){
         a = v;
       
         switch (a) {
+
           case true:
+
             console.log("product available")
-            //placeOrder
+
+            currOrder = new orderHandler(command.productID, command.productAMT);
+
+            async function newPlaceOrder(){
+      
+              //ordered = await currOrder.placeOrder();
+            
+              console.log(`sanity check: ${currOrder.stockAMT}`)
+            }
+            
+            newPlaceOrder();
+
             break;
     
           case false:
-            console.log("Product not available or insuffivcient quantity, place a different order")
+            console.log("Product not available or insufficient quantity, place a different order")
             customerOrder();
             break;
     
@@ -217,18 +214,9 @@ async function customerOrder(){
 
 }
 
-customerOrder();
+// customerOrder();
 
-//Running this application will first display all of the items available for sale. Include the ids, names,
-//and prices of products for sale.
-
-// 7. Once the customer has placed the order, your application should check if your store has enough of the product to meet
-// the customer's request.
-
-//    * If not, the app should log a phrase like `Insufficient quantity!`, and then prevent the order from going through.
-
-    //need order constructor to pass orders to - validates this crap before it runs sql
-    //SELECT query validate amout is greater than requested
+module.exports = connection;
 
 // 8. However, if your store _does_ have enough of the product, you should fulfill the customer's order.
 //    * This means updating the SQL database to reflect the remaining quantity.
