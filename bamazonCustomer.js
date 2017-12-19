@@ -1,4 +1,3 @@
-
 var inquirer = require("inquirer");
 var mysql = require("mysql");
 
@@ -28,14 +27,14 @@ var orderHandler = function(productID, productAmount) {
 
   this.productID = productID;
   this.productAmount = productAmount;
-  this.stockAMT = 0;
-  this.currPrice = 0;
+  var stockAMT = 0;
+  var currPrice = 0;
 
   this.inStock = function(){
 
     return new Promise((resolve) => {
       connection.query(
-        'SELECT stock_quantity FROM products WHERE ?',
+        'SELECT stock_quantity, price FROM products WHERE ?',
       {
         item_id: productID
       },
@@ -50,8 +49,11 @@ var orderHandler = function(productID, productAmount) {
         } else if (response[0].stock_quantity < productAmount) {
           resolve(false)
         } else {
+          //console.log(response);
+          stockAMT = response[0].stock_quantity
+          currPrice = response[0].price
+          //console.log(currPrice);
           resolve(true);
-          resolve(this.stockAMT = response[0].stock_quantity);
         }
         
       });
@@ -93,7 +95,10 @@ var orderHandler = function(productID, productAmount) {
 
   this.placeOrder = function(){
 
-    newStockQuantity = this.stockAMT - this.productAmount;
+    //console.log(`stock amount ${stockAMT}`)
+    //console.log(`product amount ${productAmount}`)
+
+    newStockQuantity = stockAMT - productAmount;
     
     return new Promise((resolve) => {
       connection.query(
@@ -108,8 +113,7 @@ var orderHandler = function(productID, productAmount) {
           throw error;
         }
 
-        resolve(console.log(response));
-        //console.log(response)
+        resolve(response);
         
       });
     })
@@ -118,9 +122,15 @@ var orderHandler = function(productID, productAmount) {
 
   this.getPrice = function(){
 
-  }
-}
+    newStockQuantity = stockAMT - productAmount;
+    
+    return new Promise((resolve) => {
 
+      resolve(console.log(`Total Amount: $${productAmount * currPrice}`))
+
+    })
+  };
+}
 
 var myOrder = new orderHandler;
 
@@ -169,9 +179,9 @@ async function customerOrder(){
 
       async function validateStock(){
       
-        stocked = await stocked.inStock();
+        isStocked = await stocked.inStock();
       
-        return stocked
+        return isStocked
       }
       
       validateStock().then(v => {
@@ -186,16 +196,23 @@ async function customerOrder(){
 
             console.log("product available")
 
-            currOrder = new orderHandler(command.productID, command.productAMT);
-
             async function newPlaceOrder(){
       
-              //ordered = await currOrder.placeOrder();
-            
-              console.log(`sanity check: ${currOrder.stockAMT}`)
+              ordered = await stocked.placeOrder();
+
+              console.log(`Order Placed!`)
+
             }
-            
+
+            async function newGetPrice(){
+      
+              totaled = await stocked.getPrice();
+
+            }
+
             newPlaceOrder();
+
+            newGetPrice();
 
             break;
     
@@ -216,10 +233,7 @@ async function customerOrder(){
 
 // customerOrder();
 
-module.exports = connection;
+//module.exports = connection;
 
-// 8. However, if your store _does_ have enough of the product, you should fulfill the customer's order.
-//    * This means updating the SQL database to reflect the remaining quantity.
-    //UPDATE query here
 //    * Once the update goes through, show the customer the total cost of their purchase.
     //function here probably
